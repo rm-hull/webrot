@@ -1,3 +1,6 @@
-(defproject noir "1.0.0-SNAPSHOT"
-  :description "Webrot: A web-base Mandlebrot generator in Clojure"
-  :dependencies [[org.clojure/clojure "1.4.0"]])
+(defproject webrot "0.1.0-SNAPSHOT"
+            :description "A web-based Mandlebrot-set generator"
+            :dependencies [[org.clojure/clojure "1.4.0"]
+                           [noir "1.2.1"]]
+            :main webrot.server)
+
