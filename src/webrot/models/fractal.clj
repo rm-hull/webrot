@@ -42,28 +42,27 @@
         :else (recur
                 (inc counter)
                 (+ (- pow2-re pow2-im) c-re)
-                (+ (* z-re z-im) (* z-im z-re) c-im))))))
+                (+ (* 2 z-re z-im) c-im))))))
 
 (defn- gen-offsets [img-n bounds-n bounds-start]
   (let [delta (/ bounds-n img-n)]
     (->> (range img-n)
-        (map #(double (+ bounds-start (* % delta))))
-        vec)))
+         (map #(double (+ bounds-start (* % delta))))
+         vec)))
 
 (defn fractal [[w h] fractal-set cut-off color-map]
   (let [bounds (:bounds fractal-set)
+        c-fn (:c-fn fractal-set)
+        start-fn (:start-fn fractal-set)
         img (BufferedImage. w h BufferedImage/TYPE_INT_RGB)
         x-offsets (partial nth (gen-offsets w (width bounds) (:left bounds)))
         y-offsets (partial nth (gen-offsets h (height bounds) (:bottom bounds)))
         translate (fn [x y] [(x-offsets x) (y-offsets y)])]
-        ;delta-re (double (/ (width bounds) w))
-        ;delta-im (double (/ (height bounds) h))
-        ;translate (fn [x y] [(+ (:left bounds) (* x delta-re)) (+ (:bottom bounds) (* y delta-im))])]
     (doseq [y (range h)
             x (range w)
             :let [pt (translate x y)
-                  z ((:start-fn fractal-set) pt)
-                  c ((:c-fn fractal-set) pt)
+                  z (start-fn pt)
+                  c (c-fn pt)
                   result (compute z c cut-off)]]
       (.setRGB img x y (color-map result)))
     img))
