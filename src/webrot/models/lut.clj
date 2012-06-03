@@ -22,7 +22,7 @@
         f2 750 ; Indigo = 750 THz
         step (double (/ (- f2 f1) num-colors))]
     (->> (iterate (partial + step) f1)
-         (map (comp spectrum/rgb spectrum/wavelength-color))
+         (map (comp spectrum/rgb spectrum/frequency-color))
          (take num-colors)
          vec)))
 
@@ -47,11 +47,13 @@
          (sort-by #(.toLowerCase %)))))
 
 (defn get-color [lut idx]
-  (nth lut (mod idx (count lut))))
+  (if (nil? idx)
+    0
+    (nth lut (mod idx (count lut)))))
 
 (defn from-name [s]
   (cond
-    (= s "spectrum") (spectrum 600)
-    (= s "rainbow")  (rainbow 600)
-    :else             (from-mapfile (str s ".map"))))
+    (= s "spectrum") (spectrum 48)
+    (= s "rainbow")  (rainbow 48)
+    :else            (from-mapfile (str s ".map"))))
 

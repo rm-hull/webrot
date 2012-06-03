@@ -18,8 +18,9 @@
                  [ 9999 { :r 0 :g 0 :b 0 :s 0 } ]]]
         (second (first (drop-while #(< (first %) wavelength) bands))))))
 
-(defn frequency-color [freq gamma]
-  (wavelength-color (/ 299724.58 freq) gamma))
+(defn frequency-color
+  ([freq] (frequency-color freq 1))
+  ([freq gamma] (wavelength-color (/ 299724.58 freq) gamma)))
 
 (defn rgb [{red :r green :g blue :b scale :s :or {scale 1}}]
   (+ (bit-shift-left (int (* 255 red scale)) 16)
