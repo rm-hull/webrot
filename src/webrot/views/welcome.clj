@@ -33,14 +33,14 @@
   (let [color-map (partial lut/get-color (lut/from-name lut))]
     (fractal
       (parse-arg size [800 600])
-      (mandlebrot-set (parse-arg bounds))
-      (first (parse-arg cut-off 50))
+      (mandlebrot-set (parse-arg bounds [1 0.5 -1 -2]))
+      (first (parse-arg cut-off [50]))
       color-map)))
 
 (defpage "/julia/:lut" {:keys [lut bounds size cut-off]}
   (let [color-map (partial lut/get-color (lut/from-name lut))]
     (fractal
       (parse-arg size [800 600])
-      (julia-set [-1.0 0.0001] (parse-arg bounds))
-      (first (parse-arg cut-off 50))
+      (julia-set [-1.2311 -0.54320] (parse-arg bounds [1 1.5 -1 -1.5]))
+      (first (parse-arg cut-off [50]))
       color-map)))
