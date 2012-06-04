@@ -2,8 +2,9 @@
   (:require [webrot.views.common :as common]
             [webrot.models.lut :as lut])
   (:use [noir.core :only [defpage custom-handler]]
- ;       [hiccup.core :only [html]]
-        [webrot.models.fractal :only [fractal mandlebrot-set julia-set]])
+        ;[hiccup.core :only [html]]
+        [webrot.models.fractal :only [fractal mandlebrot-set julia-set]]
+        [clojure.string :only [split]])
   (:import [java.awt.image BufferedImage]))
 
 ;(defpage "/welcome" []
@@ -21,16 +22,25 @@
       (.setRGB img x y (lut/get-color colors y)))
     img))
 
-(defpage "/mandlebrot/:lut" {:keys [lut]}
-  (let [w 800
-        h 600
-        color-map (partial lut/get-color (lut/from-name lut))]
-    (fractal [w h] (mandlebrot-set) 50 color-map)))
+(defn parse-arg
+  ([bounds] (parse-arg bounds nil))
+  ([bounds defaults]
+    (if (seq bounds)
+      (map read-string (split bounds #","))
+      defaults)))
 
-(defpage "/julia/:lut" {:keys [lut]}
-  (let [w 800
-        h 600
-        color-map (partial lut/get-color (lut/from-name lut))]
-    (fractal [w h] (julia-set [-1.0 0.0001]) 50 color-map)))
+(defpage "/mandlebrot/:lut" {:keys [lut bounds size cut-off]}
+  (let [color-map (partial lut/get-color (lut/from-name lut))]
+    (fractal
+      (parse-arg size [800 600])
+      (mandlebrot-set (parse-arg bounds))
+      (first (parse-arg cut-off 50))
+      color-map)))
 
-
+(defpage "/julia/:lut" {:keys [lut bounds size cut-off]}
+  (let [color-map (partial lut/get-color (lut/from-name lut))]
+    (fractal
+      (parse-arg size [800 600])
+      (julia-set [-1.0 0.0001] (parse-arg bounds))
+      (first (parse-arg cut-off 50))
+      color-map)))

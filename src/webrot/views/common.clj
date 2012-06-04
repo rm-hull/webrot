@@ -1,6 +1,6 @@
 (ns webrot.views.common
   (:use [noir.core :only [defpartial]]
- ;       [hiccup.page-helpers :only [include-css html5]]
+;        [hiccup.page-helpers :only [include-css html5]]
         [compojure.response]
         [ring.util.response :only [response content-type]]
         [clojure.java.io :only [make-input-stream]])

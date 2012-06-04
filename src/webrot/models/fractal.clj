@@ -4,15 +4,19 @@
 
 (defrecord Bounds [top right bottom left])
 
-(defn julia-set [c]
-  { :bounds (Bounds. 1.0 1.5 -1.0 -1.5)
-    :start-fn (fn [xy] xy)
-    :c-fn (fn [xy] c) })
+(defn julia-set
+  ([c] (julia-set [1 1.5 -1 -1.5]))
+  ([c [top rgt bot lft]]
+    { :bounds (Bounds. top rgt bot lft)
+      :start-fn (fn [xy] xy)
+      :c-fn (fn [xy] c) }))
 
-(defn mandlebrot-set []
-  { :bounds (Bounds. 1.0 1.0 -1.0 -2.0)
-    :start-fn (fn [xy] [0 0])
-    :c-fn (fn [xy] xy) })
+(defn mandlebrot-set
+  ([] (mandlebrot-set [1 1 -1 -2]))
+  ([[top rgt bot lft]]
+    { :bounds (Bounds. top rgt bot lft)
+      :start-fn (fn [xy] [0 0])
+      :c-fn (fn [xy] xy) }))
 
 (defn- width [bounds]
   (Math/abs (- (:left bounds) (:right bounds))))
