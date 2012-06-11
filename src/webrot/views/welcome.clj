@@ -2,15 +2,15 @@
   (:require [webrot.views.common :as common]
             [webrot.models.lut :as lut])
   (:use [noir.core :only [defpage custom-handler]]
-        ;[hiccup.core :only [html]]
+        [hiccup.core :only [html]]
         [webrot.models.fractal :only [fractal mandlebrot-set julia-set]]
         [clojure.string :only [split]])
   (:import [java.awt.image BufferedImage]))
 
-;(defpage "/welcome" []
-;         (common/layout
-;[:h1 "Welcome to webrot!"]
-;           [:p "You are visitor zero."]))
+(defpage "/welcome" []
+  (common/layout
+    [:h1 "Welcome to webrot!"]
+    [:p "You are visitor zero."]))
 
 (defpage "/test/:lut" {:keys [lut]}
   (let [w 800

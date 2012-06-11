@@ -1,6 +1,6 @@
 (ns webrot.views.common
   (:use [noir.core :only [defpartial]]
-;        [hiccup.page-helpers :only [include-css html5]]
+        [hiccup.page :only [include-css html5]]
         [compojure.response]
         [ring.util.response :only [response content-type]]
         [clojure.java.io :only [make-input-stream]])
@@ -8,14 +8,14 @@
            [java.awt.image RenderedImage]
            [java.io PipedInputStream PipedOutputStream]))
 
-;(defpartial layout [& content]
-;  (html5
-;    [:head
-;      [:title "Webrot"]
-;      (include-css "/css/reset.css")]
-;    [:body
-;      [:div#wrapper
-;        content]]))
+(defpartial layout [& content]
+  (html5
+    [:head
+      [:title "Webrot"]
+      (include-css "/css/reset.css")]
+    [:body
+      [:div#wrapper
+        content]]))
 
 (defn- create-pipe [f]
   (let [in-stream (PipedInputStream.)]
