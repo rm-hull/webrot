@@ -1,16 +1,45 @@
 (ns webrot.views.welcome
   (:require [webrot.views.common :as common]
-            [webrot.models.lut :as lut])
-  (:use [noir.core :only [defpage custom-handler]]
+            [webrot.models.lut :as lut]
+            [webrot.models.fractal :as frac])
+  (:use [noir.core :only [defpage defpartial]]
         [hiccup.core :only [html]]
-        [webrot.models.fractal :only [fractal mandlebrot-set julia-set]]
-        [clojure.string :only [split]])
+        [hiccup.form]
+        [hiccup.element]
+        [hiccup.util]
+        [clojure.string :only [split join]])
   (:import [java.awt.image BufferedImage]))
 
-(defpage "/welcome" []
+(defn- parse-arg
+  ([bounds] (parse-arg bounds nil))
+  ([bounds defaults]
+    (if (seq bounds)
+      (map read-string (split bounds #","))
+      defaults)))
+
+(defn- zoom-in [params]
+  (if (nil? (:x params))
+    params
+    (let [bounds (frac/to-bounds (parse-arg (:bounds params) [1 0.5 -1 -2]))
+          screen (frac/to-bounds [0 800 600 0])
+          newb   (frac/zoom-in bounds screen (read-string (:x params)) (read-string (:y params)))
+          as-str (join "," (map #(% newb) [:top :right :bottom :left]))]
+        (assoc params :bounds as-str))))
+
+(defpartial input-fields [{:keys [lut bounds size cut-off x y] :as params}]
+  (label "lut" "LUT:")
+  (drop-down "lut" lut/available-luts lut)
+  (label "cut-off" "Cut-off:")
+  (drop-down "cut-off" (map str (range 50 301 25)) cut-off)
+  (hidden-field "bounds" bounds)
+  (hidden-field "size" "800,600")
+  (html [:input {:type "image" :src (url "mandlebrot" params) }]))
+
+(defpage [:any "/fractal"] {:as params}
   (common/layout
-    [:h1 "Welcome to webrot!"]
-    [:p "You are visitor zero."]))
+    (form-to [:post "/fractal"]
+             (input-fields (zoom-in params))
+             (submit-button "Refresh"))))
 
 (defpage "/test/:lut" {:keys [lut]}
   (let [w 800
@@ -22,25 +51,18 @@
       (.setRGB img x y (lut/get-color colors y)))
     img))
 
-(defn parse-arg
-  ([bounds] (parse-arg bounds nil))
-  ([bounds defaults]
-    (if (seq bounds)
-      (map read-string (split bounds #","))
-      defaults)))
-
-(defpage "/mandlebrot/:lut" {:keys [lut bounds size cut-off]}
+(defpage "/mandlebrot" {:keys [lut bounds size cut-off]}
   (let [color-map (partial lut/get-color (lut/from-name lut))]
-    (fractal
+    (frac/fractal
       (parse-arg size [800 600])
-      (mandlebrot-set (parse-arg bounds [1 0.5 -1 -2]))
+      (frac/mandlebrot-set (parse-arg bounds [1 0.5 -1 -2]))
       (first (parse-arg cut-off [50]))
       color-map)))
 
-(defpage "/julia/:lut" {:keys [lut bounds size cut-off]}
+(defpage "/julia" {:keys [lut bounds size cut-off]}
   (let [color-map (partial lut/get-color (lut/from-name lut))]
-    (fractal
+    (frac/fractal
       (parse-arg size [800 600])
-      (julia-set [-1.2311 -0.54320] (parse-arg bounds [1 1.5 -1 -1.5]))
+      (frac/julia-set [-1.2311 -0.54320] (parse-arg bounds [1 1.5 -1 -1.5]))
       (first (parse-arg cut-off [50]))
       color-map)))

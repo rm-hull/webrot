@@ -1,6 +1,6 @@
 (ns webrot.models.lut
   (:require [webrot.models.spectrum :as spectrum])
-  (:use     [clojure.string :only (split-lines split trim)])
+  (:use     [clojure.string :only (split-lines split trim lower-case)])
   (:import  [java.io File FileFilter]))
 
 (def maps-path "./resources/private/maps/")
@@ -40,11 +40,10 @@
     (accept [f]
       (boolean (re-find #".*\.map$" (.getName f))))))
 
-(defn get-map-files [dir-name]
+(defn- get-map-files [dir-name]
   (let [dir (File. dir-name)]
     (->> (.listFiles dir file-filter)
-         (map #(.getName %))
-         (sort-by #(.toLowerCase %)))))
+         (map #(.getName %)))))
 
 (defn get-color [lut idx]
   (if (nil? idx)
@@ -53,7 +52,17 @@
 
 (defn from-name [s]
   (cond
-    (= s "spectrum") (spectrum 48)
-    (= s "rainbow")  (rainbow 48)
+    (= s "Spectrum") (spectrum 48)
+    (= s "Rainbow")  (rainbow 48)
     :else            (from-mapfile (str s ".map"))))
+
+(defn- strip-extn [fname]
+  (first (re-seq #"\w+" fname)))
+
+(def available-luts
+  (->> (get-map-files maps-path)
+       (map strip-extn)
+       (cons "Spectrum")
+       (cons "Rainbow")
+       (sort-by lower-case)))
 

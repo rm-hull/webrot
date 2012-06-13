@@ -4,17 +4,20 @@
 
 (defrecord Bounds [top right bottom left])
 
+(defn to-bounds [[top rgt bot lft]]
+  (Bounds. top rgt bot lft))
+
 (defn julia-set
   ([c] (julia-set [1 1.5 -1 -1.5]))
-  ([c [top rgt bot lft]]
-    { :bounds (Bounds. top rgt bot lft)
+  ([c bounds]
+    { :bounds (to-bounds bounds)
       :start-fn (fn [xy] xy)
       :c-fn (fn [xy] c) }))
 
 (defn mandlebrot-set
   ([] (mandlebrot-set [1 1 -1 -2]))
-  ([[top rgt bot lft]]
-    { :bounds (Bounds. top rgt bot lft)
+  ([bounds]
+    { :bounds (to-bounds bounds)
       :start-fn (fn [xy] [0 0])
       :c-fn (fn [xy] xy) }))
 
@@ -29,10 +32,10 @@
   (let [bot (+ (:bottom bounds) (* y (/ (height bounds) (height screen))) (/ (height bounds) -4))
         lft (+ (:left bounds) (* x (/ (width bounds) (width screen))) (/ (width bounds) -4))]
     (Bounds.
-      (+ bot (/ (height bounds) 2)) ; top
-      (+ lft (/ (width bounds) 2))  ; left
-      bot
-      lft)))
+      (double (+ bot (/ (height bounds) 2))) ; top
+      (double (+ lft (/ (width bounds) 2)))  ; right
+      (double bot)
+      (double lft))))
 
 (defn- compute [[^double z-re ^double z-im] [^double c-re ^double c-im] ^long cut-off]
   (loop [counter 0
