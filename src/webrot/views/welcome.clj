@@ -27,19 +27,22 @@
         (assoc params :bounds as-str))))
 
 (defpartial input-fields [{:keys [lut bounds size cut-off x y] :as params}]
-  (label "lut" "LUT:")
-  (drop-down "lut" lut/available-luts lut)
-  (label "cut-off" "Cut-off:")
-  (drop-down "cut-off" (map str (range 50 301 25)) cut-off)
   (hidden-field "bounds" bounds)
   (hidden-field "size" "800,600")
-  (html [:input {:type "image" :src (url "mandlebrot" params) }]))
+  (html
+    [:div#control-ribbon
+      (label "lut" "LUT:")
+      (drop-down "lut" lut/available-luts lut)
+      (label "cut-off" "Cut-off:")
+      (drop-down "cut-off" (map str (range 50 301 25)) cut-off)
+      (submit-button "Refresh")]
+    [:div#fractal
+      (html [:input {:type "image" :src (url "mandlebrot" params) }])]))
 
 (defpage [:any "/fractal"] {:as params}
   (common/layout
     (form-to [:post "/fractal"]
-             (input-fields (zoom-in params))
-             (submit-button "Refresh"))))
+             (input-fields (zoom-in params)))))
 
 (defpage "/test/:lut" {:keys [lut]}
   (let [w 800
