@@ -52,6 +52,7 @@
 
 (defn from-name [s]
   (cond
+    (nil? s)         (spectrum 48)
     (= s "Spectrum") (spectrum 48)
     (= s "Rainbow")  (rainbow 48)
     :else            (from-mapfile (str s ".map"))))
