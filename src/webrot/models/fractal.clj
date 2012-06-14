@@ -74,11 +74,6 @@
       (.setRGB img x y (color-map result)))
     img))
 
-
-(defn process-rows [translate-fn start-fn c-fn cut-off color-map xs ys]
-  (let [processor (partial process-row translate-fn start-fn c-fn cut-off color-map xs)]
-    (vec (map processor ys))))
-
 (defn process-row [translate-fn start-fn c-fn cut-off color-map xs y]
   (vec (for [x xs
           :let [pt (translate-fn x y)
@@ -86,6 +81,10 @@
                 c (c-fn pt)
                 result (compute z c cut-off)]]
       (color-map result))))
+
+(defn process-rows [translate-fn start-fn c-fn cut-off color-map xs ys]
+  (let [processor (partial process-row translate-fn start-fn c-fn cut-off color-map xs)]
+    (vec (map processor ys))))
 
 (defn pfractal [[w h] fractal-set cut-off color-map]
   (let [bounds (:bounds fractal-set)
