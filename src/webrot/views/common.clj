@@ -17,8 +17,8 @@
       [:div#wrapper
         content]]))
 
-(defn- create-pipe [f]
-  (let [in-stream (PipedInputStream.)]
+(defn- create-pipe [f pipe-size]
+  (let [in-stream (PipedInputStream. pipe-size)]
     (future
       (with-open [out-stream (PipedOutputStream. in-stream)]
         (f out-stream)))
@@ -27,6 +27,6 @@
 (extend-protocol Renderable
   RenderedImage
   (render [this _]
-    (let [stream (create-pipe #(ImageIO/write this "png" %))]
+    (let [stream (create-pipe #(ImageIO/write this "png" %) 0x10000)]
       (content-type (response stream) "image/png"))))
 
