@@ -73,3 +73,37 @@
                   result (compute z c cut-off)]]
       (.setRGB img x y (color-map result)))
     img))
+
+
+(defn process-rows [translate-fn start-fn c-fn cut-off color-map xs ys]
+  (let [processor (partial process-row translate-fn start-fn c-fn cut-off color-map xs)]
+    (vec (map processor ys))))
+
+(defn process-row [translate-fn start-fn c-fn cut-off color-map xs y]
+  (vec (for [x xs
+          :let [pt (translate-fn x y)
+                z (start-fn pt)
+                c (c-fn pt)
+                result (compute z c cut-off)]]
+      (color-map result))))
+
+(defn pfractal [[w h] fractal-set cut-off color-map]
+  (let [bounds (:bounds fractal-set)
+        c-fn (:c-fn fractal-set)
+        start-fn (:start-fn fractal-set)
+        img (BufferedImage. w h BufferedImage/TYPE_INT_RGB)
+        x-offsets (partial nth (gen-offsets w (width bounds) (:left bounds)))
+        y-offsets (partial nth (gen-offsets h (height bounds) (:bottom bounds)))
+        translate-fn (fn [x y] [(x-offsets x) (y-offsets y)])
+        xs (vec (range w))
+        ys (vec (range h))
+        processor (partial process-rows translate-fn start-fn c-fn cut-off color-map xs)
+        chunks (partition-all (/ h 4) ys)
+        data (reduce concat (pmap processor chunks))]
+    (println (nth data 0))
+    (doseq [y ys
+            x xs
+            :let [result (nth (nth data y) x)]]
+      (.setRGB img x y result))
+    img))
+
