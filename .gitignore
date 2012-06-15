@@ -2,9 +2,10 @@ pom.xml
 *jar
 /lib/
 /classes/
+/target/
 .lein-deps-sum
 *.swp
 tags
 .lein-plugins
 .lein-cljsbuild-compiler-0
-resources/public/cljs/
+/resources/public/cljs/
