@@ -9,6 +9,7 @@
                  [com.cemerick/drawbridge "0.0.3"]]
   :main webrot.server
   :plugins [[lein-cljsbuild "0.2.1"]]
+  :hooks [leiningen.cljsbuild]
   :cljsbuild {
     :builds [{
         :source-path "src"

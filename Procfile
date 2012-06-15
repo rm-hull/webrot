@@ -1,1 +1,1 @@
-web:    sh ./start-server
+web:    lein run
