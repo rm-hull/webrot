@@ -18,7 +18,8 @@
     [:body
      [:div#wrapper
       content]
-     (include-js "/cljs/bootstrap.js")]))
+     ;(include-js "/cljs/bootstrap.js")
+     ]))
 
 (defn- create-pipe [f pipe-size]
   (with-open [out-stream (ByteArrayOutputStream. pipe-size)]
