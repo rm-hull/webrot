@@ -1,1 +1,2 @@
-web:    lein trampoline run
+web:    bash -c "lein cljsbuild once; lein trampoline run"
+
