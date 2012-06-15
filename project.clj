@@ -1,9 +1,9 @@
 (defproject webrot "0.1.0-SNAPSHOT"
   :description "A web-based Mandlebrot-set generator"
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [noir "1.3.0-beta7"]
-                 ;[jayq "0.1.0-alpha4"]
-                 ;[fetch "0.1.0-alpha2"]
+                 [noir "1.3.0-beta8"]
+                 [jayq "0.1.0-alpha4"]
+                 [fetch "0.1.0-alpha2"]
                  [ring/ring-core "1.1.0"]
                  [ring-basic-authentication "1.0.1"]
                  [com.cemerick/drawbridge "0.0.3"]]
