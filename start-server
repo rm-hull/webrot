@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+lein cljsbuild once
+lein run

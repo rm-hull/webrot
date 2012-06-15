@@ -6,3 +6,5 @@ pom.xml
 *.swp
 tags
 .lein-plugins
+.lein-cljsbuild-compiler-0
+resources/public/cljs/

@@ -1,6 +1,6 @@
 (ns webrot.views.common
   (:use [noir.core :only [defpartial]]
-        [hiccup.page :only [include-css html5]]
+        [hiccup.page :only [include-css include-js html5]]
         [compojure.response]
         [ring.util.response :only [response content-type]]
         [clojure.java.io :only [make-input-stream]])
@@ -11,11 +11,14 @@
 (defpartial layout [& content]
   (html5
     [:head
-      [:title "Webrot"]
-      (include-css "/css/reset.css")]
+     [:title "Webrot"]
+     (include-css "/css/reset.css")
+     (include-css "/css/default.css")
+     (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")]
     [:body
-      [:div#wrapper
-        content]]))
+     [:div#wrapper
+      content]
+     (include-js "/cljs/bootstrap.js")]))
 
 (defn- create-pipe [f pipe-size]
   (with-open [out-stream (ByteArrayOutputStream. pipe-size)]
