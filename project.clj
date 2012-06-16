@@ -9,6 +9,7 @@
                  [com.cemerick/drawbridge "0.0.3"]]
   :main webrot.server
   :plugins [[lein-cljsbuild "0.2.1"]]
+  :dev-dependencies [[vimclojure/server "2.3.3"]]
   ;:hooks [leiningen.cljsbuild]
   :cljsbuild {
     :builds [{
