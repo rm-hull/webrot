@@ -26,13 +26,16 @@
           as-str (join "," (map #(% newb) [:top :right :bottom :left]))]
         (assoc params :bounds as-str))))
 
+(defn default-lut [lut]
+  (if (nil? lut) "Spectrum" lut))
+
 (defpartial input-fields [{:keys [lut bounds size cut-off x y] :as params}]
   (hidden-field "bounds" bounds)
   (hidden-field "size" "800,600")
   (html
     [:div#control-ribbon
       (label "lut" "LUT:")
-      (drop-down "lut" lut/available-luts lut)
+      (drop-down "lut" lut/available-luts (default-lut lut))
       (label "cut-off" "Cut-off:")
       (drop-down "cut-off" (map str (range 50 301 25)) cut-off)
       (submit-button "Refresh")]
