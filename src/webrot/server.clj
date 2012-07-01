@@ -1,5 +1,6 @@
 (ns webrot.server
   (:require [noir.server :as server]
+            [noir.fetch.remotes :as remotes]
             [cemerick.drawbridge :as drawbridge]
             [ring.middleware.params :as params]
             [ring.middleware.keyword-params :as keyword-params]
@@ -8,6 +9,7 @@
             [ring.middleware.basic-authentication :as basic]))
 
 (server/load-views "src/webrot/views/")
+(server/add-middleware remotes/wrap-remotes)
 
 (def drawbridge-handler
   (-> (drawbridge/ring-handler)
