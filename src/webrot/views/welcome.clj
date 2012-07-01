@@ -59,7 +59,7 @@
       (label "lut" "LUT:")
       (drop-down "lut" lut/available-luts lut)
       (label "cut-off" "Cut-off:")
-      (drop-down "cut-off" (map str (range 50 301 25)) cut-off)
+      (drop-down "cut-off" (map str (range 50 1000 25)) cut-off)
       (submit-button "Refresh")]))
 
 (defremote zoom-in [params]
@@ -83,7 +83,7 @@
         (input-fields params))
       (html 
         [:div#fractal
-          (image (url "mandlebrot" params))
+          (link-to "#" (image (url "mandlebrot" params)))
           (common/spinner "container grey")]))))
 
 (defpage "/test/:lut" {:keys [lut]}
