@@ -12,7 +12,7 @@
   :warn-on-reflection true
   :plugins [[lein-cljsbuild "0.2.1"]]
   :dev-dependencies [[vimclojure/server "2.3.3"]]
-  ;:hooks [leiningen.cljsbuild]
+  :hooks [leiningen.cljsbuild]
   :cljsbuild {
     :builds [{
         :source-path "src"
