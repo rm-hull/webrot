@@ -1,5 +1,6 @@
 (ns webrot.views.common
   (:use [noir.core :only [defpartial]]
+        [hiccup.core :only [html]]
         [hiccup.page :only [include-css include-js html5]]
         [compojure.response]
         [ring.util.response :only [response content-type]]
@@ -13,13 +14,22 @@
     [:head
      [:title "Webrot"]
      (include-css "/css/reset.css")
-     (include-css "/css/default.css")
+     ;(include-css "/css/default.css")
+     (include-css "/css/spinner.css")
      (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")]
     [:body
      [:div#wrapper
       content]
-     ;(include-js "/cljs/bootstrap.js")
+      (include-js "/cljs/bootstrap.js")
      ]))
+
+(defpartial spinner [css-class]
+  (html
+    [:div#spinner {:class css-class }
+      [:div {:class "spinner"}
+        (for [x (range 1 13)]
+          (html 
+            [:div {:class (str "bar" x)}]))]]))
 
 (defn- create-pipe [f pipe-size]
   (with-open [out-stream (ByteArrayOutputStream. pipe-size)]
@@ -31,4 +41,3 @@
   (render [this _]
     (let [stream (create-pipe #(ImageIO/write this "png" %) 0x20000)]
       (content-type (response stream) "image/png"))))
-
