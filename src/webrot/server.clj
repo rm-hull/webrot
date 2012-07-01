@@ -9,7 +9,6 @@
             [ring.middleware.basic-authentication :as basic]))
 
 (server/load-views "src/webrot/views/")
-(server/add-middleware remotes/wrap-remotes)
 
 (def drawbridge-handler
   (-> (drawbridge/ring-handler)
