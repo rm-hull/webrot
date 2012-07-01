@@ -21,11 +21,16 @@
       :start-fn (fn [xy] [0 0])
       :c-fn (fn [xy] xy) }))
 
+(defn- abs [n]
+  (if (neg? n)
+    (- n)
+    n))
+
 (defn- width [bounds]
-  (Math/abs (- (:left bounds) (:right bounds))))
+  (abs (- (:left bounds) (:right bounds))))
 
 (defn- height [bounds]
-  (Math/abs (- (:top bounds) (:bottom bounds))))
+  (abs (- (:top bounds) (:bottom bounds))))
 
 (defn zoom-in [bounds screen x y]
   "Recalculate bounds (zoom in by 50%)"
