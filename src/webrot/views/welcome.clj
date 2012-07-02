@@ -88,10 +88,11 @@
     img))
 
 (defpage "/render" {:as params}
-  (let [color-map (partial lut/get-color (lut/from-name (:lut params)))
-        size      (parse-arg (:size params) [800 600])
-        bounds    (parse-arg (:bounds params) [1 0.5 -1 -2])
-        cut-off   (first (parse-arg (:cut-off params) [50])) ]
+  (let [params    (defaults params)
+        color-map (partial lut/get-color (lut/from-name (:lut params)))
+        size      (parse-arg (:size params))
+        bounds    (parse-arg (:bounds params))
+        cut-off   (first (parse-arg (:cut-off params))) ]
     (frac/fractal
       size
       (frac/mandlebrot-set bounds)
