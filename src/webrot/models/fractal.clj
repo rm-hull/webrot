@@ -15,7 +15,7 @@
       :c-fn (fn [xy] c) }))
 
 (defn mandlebrot-set
-  ([] (mandlebrot-set [1 1 -1 -2]))
+  ([] (mandlebrot-set [1 0.5 -1 -2]))
   ([bounds]
     { :bounds (to-bounds bounds)
       :start-fn (fn [xy] [0 0])
