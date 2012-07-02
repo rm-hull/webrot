@@ -19,37 +19,34 @@
       defaults)))
 
 (defmulti to-number class)
+(defmethod to-number Number [n] n)
+(defmethod to-number :default [obj] (Integer/parseInt (str obj)))
 
-(defmethod to-number Number [n]
-  n)
+(defn- default-type [params]
+  (assoc params :type (get params :type "mandlebrot")))
 
-(defmethod to-number :default [obj]
-  (Integer/parseInt (str obj)))
+(defn- defaults [params]
+  (let [defaults {:lut "Spectrum"
+                  :type "mandlebrot"
+                  :bounds "1,0.5,-1,-2"
+                  :cut-off 50
+                  :size "800,600"
+                  :x 400 :y 300}]
+    (merge defaults params)))
 
-(defn- default-lut [params]
-  (assoc params :lut (get params :lut "Spectrum")))
-
-(defn- default-size [params]
-  (assoc params :size (get params :size "800,600")))
-
-(defn- default-cutoff [params]
-  (assoc params :cut-off (get params :cut-off "50")))
-
-(defn- default-params 
-  ([params] (default-params params frac/zoom-in))
+(defn- process-params 
+  ([params] (process-params params (fn [& args] (first args))))
   ([params zoom-fn]
-    (let [params (-> params default-lut default-size default-cutoff)]
-      (if (nil? (:x params))
-        params
-        (let [bounds (frac/to-bounds (parse-arg (:bounds params) [1 0.5 -1 -2]))
-              screen (frac/to-bounds [0 800 600 0])
-              newb   (zoom-fn 
-                       bounds 
-                       screen 
-                       (to-number (:x params)) 
-                       (to-number (:y params)))
-              as-str (join "," (map #(% newb) [:top :right :bottom :left]))]
-            (assoc params :bounds as-str))))))
+    (let [params (defaults params)
+          bounds (frac/to-bounds (parse-arg (:bounds params)))
+          screen (frac/to-bounds [0 800 600 0])
+          newb   (zoom-fn 
+                   bounds 
+                   screen 
+                   (to-number (:x params)) 
+                   (to-number (:y params)))
+          as-str (join "," (map #(% newb) [:top :right :bottom :left]))]
+      (assoc params :bounds as-str))))
 
 (defpartial input-fields [{:keys [lut bounds size cut-off x y] :as params}]
   (hidden-field "bounds" bounds)
@@ -60,30 +57,24 @@
       (drop-down "lut" lut/available-luts lut)
       (label "cut-off" "Cut-off:")
       (drop-down "cut-off" (map str (range 50 1000 25)) cut-off)
-      (submit-button "Refresh")]))
+      (submit-button { :id "refresh" }  "Refresh")
+      (submit-button { :id "initial" }  "Initial")
+      (submit-button { :id "zoom-out" } "Zoom out")
+      (submit-button { :id "julia" }    "Julia")]))
 
 (defremote zoom-in [params]
-  (default-params params frac/zoom-in))
+  (process-params params frac/zoom-in))
 
-(defpage [:any "/fractal-old"] {:as params}
-  (let [params (default-params params)]
-    (common/layout
-      (form-to 
-        [:post "/fractal-old"]
-        (input-fields params)
-        (html 
-          [:div#fractal
-            (html [:input {:type "image" :src (url "mandlebrot" params) }])])))))
+(defremote zoom-out [params]
+  (process-params params frac/zoom-out))
 
-(defpage [:any "/fractal"] {:as params}
-  (let [params (default-params params)]
+(defpage [:get "/fractal"] {:as params}
+  (let [params (process-params params)]
     (common/layout
-      (form-to 
-        [:post "/fractal"]
-        (input-fields params))
+      (input-fields params)
       (html 
         [:div#fractal
-          (link-to "#" (image (url "mandlebrot" params)))
+          (link-to "#" (image (url "render" params)))
           (common/spinner "container grey")]))))
 
 (defpage "/test/:lut" {:keys [lut]}
@@ -96,18 +87,23 @@
       (.setRGB img x y (lut/get-color colors y)))
     img))
 
-(defpage "/mandlebrot" {:keys [lut bounds size cut-off]}
-  (let [color-map (partial lut/get-color (lut/from-name lut))]
+(defpage "/render" {:as params}
+  (let [color-map (partial lut/get-color (lut/from-name (:lut params)))
+        size      (parse-arg (:size params) [800 600])
+        bounds    (parse-arg (:bounds params) [1 0.5 -1 -2])
+        cut-off   (first (parse-arg (:cut-off params) [50])) ]
     (frac/fractal
-      (parse-arg size [800 600])
-      (frac/mandlebrot-set (parse-arg bounds [1 0.5 -1 -2]))
-      (first (parse-arg cut-off [50]))
+      size
+      (frac/mandlebrot-set bounds)
+      cut-off
       color-map)))
 
-(defpage "/julia" {:keys [lut bounds size cut-off]}
+(defpage "/julia" {:keys [lut bounds size cut-off start-posn]}
   (let [color-map (partial lut/get-color (lut/from-name lut))]
     (frac/fractal
       (parse-arg size [800 600])
-      (frac/julia-set [-1.2311 -0.54320] (parse-arg bounds [1 1.5 -1 -1.5]))
+      (frac/julia-set 
+        (parse-arg start-posn) 
+        (parse-arg bounds [1 1.5 -1 -1.5]))
       (first (parse-arg cut-off [50]))
       color-map)))

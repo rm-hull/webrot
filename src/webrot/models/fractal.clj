@@ -15,7 +15,7 @@
       :c-fn (fn [xy] c) }))
 
 (defn mandlebrot-set
-  ([] (mandlebrot-set [1 1 -1 -2]))
+  ([] (mandlebrot-set [1 0.5 -1 -2]))
   ([bounds]
     { :bounds (to-bounds bounds)
       :start-fn (fn [xy] [0 0])
@@ -35,10 +35,20 @@
 (defn zoom-in [bounds screen x y]
   "Recalculate bounds (zoom in by 50%)"
   (let [bot (+ (:bottom bounds) (* y (/ (height bounds) (height screen))) (/ (height bounds) -4))
-        lft (+ (:left bounds) (* x (/ (width bounds) (width screen))) (/ (width bounds) -4))]
+        lft (+ (:left bounds)   (* x (/ (width bounds)  (width screen)))  (/ (width bounds) -4))]
     (Bounds.
       (double (+ bot (/ (height bounds) 2))) ; top
       (double (+ lft (/ (width bounds) 2)))  ; right
+      (double bot)
+      (double lft))))
+
+(defn zoom-out [bounds screen x y]
+  "Recalculate bounds (zoom out by 50%)"
+  (let [bot (+ (:bottom bounds) (* y (/ (height bounds) (height screen))) (- (height bounds)))
+        lft (+ (:left bounds)   (* x (/ (width bounds)  (width screen)))  (- (width bounds)))]
+    (Bounds.
+      (double (+ bot (* (height bounds) 2))) ; top
+      (double (+ lft (* (width bounds) 2)))  ; right
       (double bot)
       (double lft))))
 
