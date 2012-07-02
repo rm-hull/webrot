@@ -59,6 +59,7 @@
       (drop-down "cut-off" (map str (range 50 1000 25)) cut-off)
       (submit-button { :id "refresh" }  "Refresh")
       (submit-button { :id "initial" }  "Initial")
+      (submit-button { :id "zoom-in" }  "Zoom in")
       (submit-button { :id "zoom-out" } "Zoom out")
       (submit-button { :id "julia" }    "Julia")]))
 

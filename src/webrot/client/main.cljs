@@ -9,6 +9,7 @@
 (def $spinner  ($ :#spinner))
 (def $refresh  ($ :#refresh))
 (def $initial  ($ :#initial))
+(def $zoom-in  ($ :#zoom-in))
 (def $zoom-out ($ :#zoom-out))
 
 (def params (atom {}))
@@ -50,6 +51,16 @@
                               (deref params) 
                               (form-params)
                               (coords-from-event e))]
+          (fm/remote (zoom-in merged-params) [result]
+            (redraw result)))))
+
+    (bind $zoom-in :click 
+      (fn [e] 
+        (.preventDefault e)
+        (let [merged-params (merge 
+                              (deref params) 
+                              (form-params)
+                              {:x 400 :y 300})]
           (fm/remote (zoom-in merged-params) [result]
             (redraw result)))))
 
