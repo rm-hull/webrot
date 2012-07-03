@@ -53,15 +53,18 @@
   (hidden-field "size" "800,600")
   (html
     [:div#control-ribbon
-      (label "lut" "LUT:")
-      (drop-down "lut" lut/available-luts lut)
-      (label "cut-off" "Cut-off:")
-      (drop-down "cut-off" (map str (range 50 1000 25)) cut-off)
+      (label :lut "LUT:")
+      (drop-down :lut lut/available-luts lut)
+      (label :cut-off "Cut-off:")
+      (drop-down :cut-off (map str (range 50 1000 25)) cut-off)
       (submit-button { :id "refresh" }  "Refresh")
       (submit-button { :id "initial" }  "Initial")
       (submit-button { :id "zoom-in" }  "Zoom in")
       (submit-button { :id "zoom-out" } "Zoom out")
-      (submit-button { :id "julia" }    "Julia")]))
+      (submit-button { :id "julia" }    "Julia")
+      (label :drag-target "Drag target for Julia Set")
+      (image { :id "drag-target" } "img/target32-invert-blur.png")
+     ]))
 
 (defremote zoom-in [params]
   (process-params params frac/zoom-in))
@@ -75,7 +78,7 @@
       (input-fields params)
       (html 
         [:div#fractal
-          (link-to "#" (image (url "render" params)))
+          (link-to "#" (image { :id "drop-zone" } (url "render" params)))
           (common/spinner "container grey")]))))
 
 (defpage "/test/:lut" {:keys [lut]}

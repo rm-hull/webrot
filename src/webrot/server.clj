@@ -6,7 +6,8 @@
             [ring.middleware.keyword-params :as keyword-params]
             [ring.middleware.nested-params :as nested-params]
             [ring.middleware.session :as session]
-            [ring.middleware.basic-authentication :as basic]))
+            [ring.middleware.basic-authentication :as basic]
+            [ring.middleware.gzip :as deflate]))
 
 (server/load-views "src/webrot/views/")
 
@@ -30,7 +31,8 @@
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
         port (Integer. (get (System/getenv) "PORT" "8080"))]
-    (server/add-middleware wrap-drawbridge)
+    ;(server/add-middleware wrap-drawbridge)
+    (server/add-middleware deflate/wrap-gzip)
     (server/start port {:mode mode
                         :ns 'webrot})))
 

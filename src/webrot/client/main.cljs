@@ -4,20 +4,22 @@
   (:use [jayq.core :only [$ hide show bind attr fade-in document-ready val]]
         [crate.util :only [url]]))
 
-(def $img      ($ :#fractal>a>img))
-(def $fractal  ($ :#fractal>a))
-(def $spinner  ($ :#spinner))
-(def $refresh  ($ :#refresh))
-(def $initial  ($ :#initial))
-(def $zoom-in  ($ :#zoom-in))
-(def $zoom-out ($ :#zoom-out))
+(def $img         ($ :#fractal>a>img))
+(def $fractal     ($ :#fractal>a))
+(def $spinner     ($ :#spinner))
+(def $refresh     ($ :#refresh))
+(def $initial     ($ :#initial))
+(def $zoom-in     ($ :#zoom-in))
+(def $zoom-out    ($ :#zoom-out))
+(def $drag-target ($ :#drag-target))
+(def $drop-zone   ($ :#drop-zone))
 
 (def params (atom {}))
 (def busy (atom true))
 
-(defn- coords-from-event [e] 
-  { :x (.-offsetX e)
-    :y (.-offsetY e) })
+(defn- coords-from-event [event] 
+  { :x (.-offsetX event)
+    :y (.-offsetY event) })
 
 (defn- form-params []
   { :lut     (val ($ "#control-ribbon #lut :selected"))
@@ -39,24 +41,31 @@
 (document-ready 
   (fn []
 
+    (.draggable $drag-target)
+    (.droppable $drop-zone)
+   
+    (bind $drop-zone :drop 
+      (fn [event ui] 
+        (js/alert (str "Dropped: " (-> ui .-offset .-top) "," (-> ui .-offset .-left)))))
+
     (bind $img :load
       (fn []
         (swap! busy not)
         (hide $spinner)))
 
     (bind $fractal :click 
-      (fn [e] 
-        (.preventDefault e)
+      (fn [event] 
+        (.preventDefault event)
         (let [merged-params (merge 
                               (deref params) 
                               (form-params)
-                              (coords-from-event e))]
+                              (coords-from-event event))]
           (fm/remote (zoom-in merged-params) [result]
             (redraw result)))))
 
     (bind $zoom-in :click 
-      (fn [e] 
-        (.preventDefault e)
+      (fn [event] 
+        (.preventDefault event)
         (let [merged-params (merge 
                               (deref params) 
                               (form-params)
@@ -65,8 +74,8 @@
             (redraw result)))))
 
     (bind $zoom-out :click 
-      (fn [e] 
-        (.preventDefault e)
+      (fn [event] 
+        (.preventDefault event)
         (let [merged-params (merge 
                               (deref params) 
                               (form-params))]
@@ -74,15 +83,15 @@
             (redraw result)))))
 
     (bind $refresh :click
-      (fn [e]
-        (.preventDefault e)
+      (fn [event]
+        (.preventDefault event)
         (redraw (merge 
                   (deref params) 
                   (form-params)))))
           
     (bind $initial :click
-      (fn [e]
-        (.preventDefault e)
+      (fn [event]
+        (.preventDefault event)
         (redraw (form-params))))
     ))
           
