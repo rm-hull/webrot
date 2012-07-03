@@ -7,6 +7,7 @@
                  [fetch "0.1.0-alpha2"]
                  [ring/ring-core "1.1.1"]
                  [ring-basic-authentication "1.0.1"]
+                 [ibdknox/ring-gzip-middleware "0.1.1"]
                  [com.cemerick/drawbridge "0.0.6"]]
   :main webrot.server
   :warn-on-reflection true
@@ -18,7 +19,7 @@
         :source-path "src"
         :compiler {
           :output-to "resources/public/cljs/bootstrap.js"
-          :optimizations :whitespace
+          :optimizations :whitespace ;:advanced
           :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"]         
           :pretty-print true}}]})
 
