@@ -8,8 +8,8 @@
   (Bounds. top rgt bot lft))
 
 (defn julia-set
-  ([c] (julia-set [1 1.5 -1 -1.5]))
-  ([c bounds]
+  ([c] (julia-set [1 1.5 -1 -1.5] c))
+  ([bounds c]
     { :bounds (to-bounds bounds)
       :start-fn (fn [xy] xy)
       :c-fn (fn [xy] c) }))
@@ -22,9 +22,7 @@
       :c-fn (fn [xy] xy) }))
 
 (defn- abs [n]
-  (if (neg? n)
-    (- n)
-    n))
+  (if (neg? n) (- n) n))
 
 (defn- width [bounds]
   (abs (- (:left bounds) (:right bounds))))
@@ -51,6 +49,12 @@
       (double (+ lft (* (width bounds) 2)))  ; right
       (double bot)
       (double lft))))
+
+(defn real-coords [bounds screen x y]
+  (let [bounds (to-bounds bounds)
+        screen (to-bounds screen)]
+  { :x (double (+ (:left bounds) (* (width bounds)  (/ x (width screen)))))     ;  0.0014324234 
+    :y (double (+ (:top bounds)  (* (height bounds) (/ y (height screen))))) })) ; 1.00035345353542
 
 (defn- compute [[^double z-re ^double z-im] [^double c-re ^double c-im] ^long cut-off]
   (loop [counter 0

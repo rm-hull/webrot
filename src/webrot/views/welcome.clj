@@ -11,16 +11,16 @@
         [clojure.string :only [split join]])
   (:import [java.awt.image BufferedImage]))
 
-(defn- parse-arg
-  ([bounds] (parse-arg bounds nil))
-  ([bounds defaults]
-    (if (seq bounds)
-      (map read-string (split bounds #","))
-      defaults)))
-
 (defmulti to-number class)
 (defmethod to-number Number [n] n)
-(defmethod to-number :default [obj] (Integer/parseInt (str obj)))
+(defmethod to-number :default [obj] (read-string obj))
+
+(defn- parse-arg
+  ([arg] (parse-arg arg nil))
+  ([arg defaults]
+    (if (seq arg)
+      (map to-number (split arg #","))
+      defaults)))
 
 (defn- default-type [params]
   (assoc params :type (get params :type "mandlebrot")))
@@ -66,6 +66,14 @@
       (image { :id "drag-target" } "img/target32-invert-blur.png")
      ]))
 
+(defremote real-coords [params]
+  (let [params (defaults params)
+        size   [0 800 600 0] ; (parse-arg (:size params))
+        bounds (parse-arg (:bounds params))
+        x      (to-number (:x params))
+        y      (to-number (:y params))]
+    (frac/real-coords bounds size x y)))
+
 (defremote zoom-in [params]
   (process-params params frac/zoom-in))
 
@@ -92,23 +100,18 @@
     img))
 
 (defpage "/render" {:as params}
-  (let [params    (defaults params)
-        color-map (partial lut/get-color (lut/from-name (:lut params)))
-        size      (parse-arg (:size params))
-        bounds    (parse-arg (:bounds params))
-        cut-off   (first (parse-arg (:cut-off params))) ]
+  (let [params      (defaults params)
+        color-map   (partial lut/get-color (lut/from-name (:lut params)))
+        size        (parse-arg (:size params))
+        bounds      (parse-arg (:bounds params))
+        cut-off     (to-number (:cut-off params))
+        fractal-set (case (:type params)
+                      "mandlebrot" (frac/mandlebrot-set bounds)
+                      "julia"      (frac/julia-set bounds (parse-arg (:start-posn params))))]
     (frac/fractal
       size
-      (frac/mandlebrot-set bounds)
+      fractal-set
       cut-off
       color-map)))
 
-(defpage "/julia" {:keys [lut bounds size cut-off start-posn]}
-  (let [color-map (partial lut/get-color (lut/from-name lut))]
-    (frac/fractal
-      (parse-arg size [800 600])
-      (frac/julia-set 
-        (parse-arg start-posn) 
-        (parse-arg bounds [1 1.5 -1 -1.5]))
-      (first (parse-arg cut-off [50]))
-      color-map)))
+; [1 1.5 -1 -1.5]))

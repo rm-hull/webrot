@@ -1,7 +1,7 @@
 (ns webrot.client.main
   (:require [fetch.remotes :as remotes])
   (:require-macros [fetch.macros :as fm])
-  (:use [jayq.core :only [$ hide show bind attr fade-in document-ready val]]
+  (:use [jayq.core :only [$ hide show bind attr fade-in document-ready val css anim]]
         [crate.util :only [url]]))
 
 (def $img         ($ :#fractal>a>img))
@@ -21,6 +21,10 @@
   { :x (.-offsetX event)
     :y (.-offsetY event) })
 
+(defn- coords-from-ui [ui] 
+  { :x (-> ui .-offset .-left)
+    :y (-> ui .-offset .-top) })
+
 (defn- form-params []
   { :lut     (val ($ "#control-ribbon #lut :selected"))
     :cut-off (val ($ "#control-ribbon #cut-off :selected")) })
@@ -32,12 +36,11 @@
         (swap! params {} args)
         (swap! busy identity true)
         (attr $img :src (url "render" args))
-        false)))
+        false))) 
     ;            (fade-in $fractal 400) 
     ;            (animate $fractal {:src (url "mandlebrot" result)})
     ;            (.log js/console (str "Click: " (url "mandlebrot" result))))))))
   
-
 (document-ready 
   (fn []
 
@@ -46,7 +49,17 @@
    
     (bind $drop-zone :drop 
       (fn [event ui] 
-        (js/alert (str "Dropped: " (-> ui .-offset .-top) "," (-> ui .-offset .-left)))))
+        (let [merged-params (merge 
+                       (deref params)
+                       (form-params)
+                       (coords-from-ui ui))]
+          (fm/remote (real-coords merged-params) [result]
+            (anim $drag-target { :left 0 :top 0 } 500)
+            (redraw (merge 
+                       (form-params)
+                       { :start-posn (str (:x result) "," (:y result)) 
+                         :bounds "1,1.5,-1,-1.5"
+                         :type "julia" }))))))
 
     (bind $img :load
       (fn []
