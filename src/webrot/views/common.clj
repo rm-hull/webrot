@@ -29,8 +29,10 @@
      (include-css "/css/reset.css")
      ;(include-css "/css/default.css")
      (include-css "/css/spinner.css")
-     (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
-     (include-js "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js")
+     ;(include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
+     ;(include-js "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js")
+     (include-js "js/jquery.min.js")
+     (include-js "js/jquery-ui.min.js")
      (include-js "js/jquery.ui.touch-punch.min.js")]
     [:body
      [:div#wrapper
