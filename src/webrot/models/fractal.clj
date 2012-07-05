@@ -5,7 +5,11 @@
 (defrecord Bounds [top right bottom left])
 
 (defn to-bounds [[top rgt bot lft]]
-  (Bounds. top rgt bot lft))
+  (Bounds. 
+    (max top bot)
+    (max lft rgt)
+    (min top bot)
+    (min lft rgt)))
 
 (defn julia-set
   ([c] (julia-set [1 1.5 -1 -1.5] c))
@@ -53,8 +57,8 @@
 (defn real-coords [bounds screen x y]
   (let [bounds (to-bounds bounds)
         screen (to-bounds screen)]
-  { :x (double (+ (:left bounds) (* (width bounds)  (/ x (width screen)))))     ;  0.0014324234 
-    :y (double (+ (:top bounds)  (* (height bounds) (/ y (height screen))))) })) ; 1.00035345353542
+  { :x (double (+ (:left bounds)   (* (width bounds)  (/ x (width screen)))))
+    :y (double (+ (:bottom bounds) (* (height bounds) (/ y (height screen))))) }))
 
 (defn- compute [[^double z-re ^double z-im] [^double c-re ^double c-im] ^long cut-off]
   (loop [counter 0
@@ -71,26 +75,28 @@
                 (+ (* 2 z-re z-im) c-im))))))
 
 (defn- gen-offsets [img-n bounds-n bounds-start]
-  (let [delta (/ bounds-n img-n)]
-    (->> (range img-n)
-         (map #(double (+ bounds-start (* % delta))))
-         vec)))
+  (let [rng   (range img-n)
+        delta (double (/ bounds-n img-n))]
+    (->> rng
+         (map #(+ bounds-start (* delta %)))
+         (zipmap rng))))
 
 (defn fractal [[w h] fractal-set cut-off color-map]
   (let [bounds (:bounds fractal-set)
         c-fn (:c-fn fractal-set)
         start-fn (:start-fn fractal-set)
         img (BufferedImage. w h BufferedImage/TYPE_INT_RGB)
-        x-offsets (partial nth (gen-offsets w (width bounds) (:left bounds)))
-        y-offsets (partial nth (gen-offsets h (height bounds) (:bottom bounds)))
-        translate (fn [x y] [(x-offsets x) (y-offsets y)])]
-    (doseq [y (range h)
-            x (range w)
-            :let [pt (translate x y)
+        xs (gen-offsets w (width bounds)  (:left bounds))
+        ys (gen-offsets h (height bounds) (:bottom bounds))
+        ]
+    (doseq [y ys
+            x xs
+            :let [pt [(val x) (val y)]
                   z (start-fn pt)
                   c (c-fn pt)
-                  result (compute z c cut-off)]]
-      (.setRGB img x y (color-map result)))
+                  result (compute z c cut-off)]
+            :when (not (nil? result))]
+      (.setRGB img (key x) (key y) (color-map result)))
     img))
 
 (defn process-row [translate-fn start-fn c-fn cut-off color-map xs y]
