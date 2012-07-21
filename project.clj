@@ -17,6 +17,7 @@
                  ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"],
                  :pretty-print true}}]}
   :hooks [leiningen.cljsbuild]
+  :plugins [[lein-cljsbuild "0.2.4"]]
   :profiles {:dev {:dependencies [[vimclojure/server "2.3.3"]]}}
   :main webrot.server
   :min-lein-version "2.0.0"
