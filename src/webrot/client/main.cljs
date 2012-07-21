@@ -14,6 +14,8 @@
 (def $drag-target ($ :#drag-target))
 (def $drop-zone   ($ :#drop-zone))
 
+(def hit-event "click touchstart")
+
 (def params (atom {}))
 (def busy (atom true))
 
@@ -66,7 +68,7 @@
         (swap! busy not)
         (hide $spinner)))
 
-    (bind $fractal :click 
+    (bind $fractal hit-event
       (fn [event] 
         (.preventDefault event)
         (let [merged-params (merge 
@@ -76,7 +78,7 @@
           (fm/remote (zoom-in merged-params) [result]
             (redraw result)))))
 
-    (bind $zoom-in :click 
+    (bind $zoom-in hit-event
       (fn [event] 
         (.preventDefault event)
         (let [merged-params (merge 
@@ -86,7 +88,7 @@
           (fm/remote (zoom-in merged-params) [result]
             (redraw result)))))
 
-    (bind $zoom-out :click 
+    (bind $zoom-out hit-event
       (fn [event] 
         (.preventDefault event)
         (let [merged-params (merge 
@@ -95,14 +97,14 @@
           (fm/remote (zoom-out merged-params) [result]
             (redraw result)))))
 
-    (bind $refresh :click
+    (bind $refresh hit-event
       (fn [event]
         (.preventDefault event)
         (redraw (merge 
                   (deref params) 
                   (form-params)))))
           
-    (bind $initial :click
+    (bind $initial hit-event
       (fn [event]
         (.preventDefault event)
         (redraw (form-params))))
