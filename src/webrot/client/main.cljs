@@ -14,7 +14,7 @@
 (def $drag-target ($ :#drag-target))
 (def $drop-zone   ($ :#drop-zone))
 
-(def hit-event "click touchstart")
+(def hit-event :click) ; touchstart not ready for prime time yet: "click touchstart")
 
 (def params (atom {}))
 (def busy (atom true))
