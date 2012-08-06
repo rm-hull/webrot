@@ -1,5 +1,5 @@
-(ns webrot.models.fractal
-  (:require [webrot.models.lut :as lut])
+(ns webrot.data-mappers.fractal
+  (:require [webrot.data-mappers.lut :as lut])
   (:import [java.awt.image BufferedImage]))
 
 (defrecord Bounds [top right bottom left])

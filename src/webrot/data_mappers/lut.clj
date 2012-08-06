@@ -1,5 +1,5 @@
-(ns webrot.models.lut
-  (:require [webrot.models.spectrum :as spectrum])
+(ns webrot.data-mappers.lut
+  (:require [webrot.data-mappers.spectrum :as spectrum])
   (:use     [clojure.string :only (split-lines split trim lower-case)])
   (:import  [java.io File FileFilter]))
 

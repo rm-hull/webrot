@@ -1,4 +1,4 @@
-(ns webrot.models.spectrum)
+(ns webrot.data-mappers.spectrum)
 
 (defn wavelength-color
   ([wavelength] (wavelength-color wavelength 1))

@@ -1,7 +1,7 @@
 (ns webrot.views.welcome
   (:require [webrot.views.common :as common]
-            [webrot.models.lut :as lut]
-            [webrot.models.fractal :as frac])
+            [webrot.data-mappers.lut :as lut]
+            [webrot.data-mappers.fractal :as frac])
   (:use [noir.core :only [defpage defpartial]]
         [noir.fetch.remotes :only [defremote]]
         [hiccup.core :only [html]]
@@ -61,7 +61,6 @@
       (submit-button { :id "initial" }  "Initial")
       (submit-button { :id "zoom-in" }  "Zoom in")
       (submit-button { :id "zoom-out" } "Zoom out")
-      (submit-button { :id "julia" }    "Julia")
       (label :drag-target "Drag target for Julia Set")
       (image { :id "drag-target" } "img/target32-invert-blur.png")
      ]))
@@ -80,7 +79,7 @@
 (defremote zoom-out [params]
   (process-params params frac/zoom-out))
 
-(defpage [:get "/fractal"] {:as params}
+(defpage [:get "/mandlebrot"] {:as params}
   (let [params (process-params params)]
     (common/layout
       (input-fields params)
