@@ -1,7 +1,8 @@
 (ns webrot.views.welcome
   (:require [webrot.views.common :as common]
             [webrot.data-mappers.lut :as lut]
-            [webrot.data-mappers.fractal :as frac])
+            [webrot.data-mappers.bounds :as b]
+            [webrot.data-mappers.fractal :as f])
   (:use [noir.core :only [defpage defpartial]]
         [noir.fetch.remotes :only [defremote]]
         [hiccup.core :only [html]]
@@ -38,8 +39,8 @@
   ([params] (process-params params (fn [& args] (first args))))
   ([params zoom-fn]
     (let [params (defaults params)
-          bounds (frac/to-bounds (parse-arg (:bounds params)))
-          screen (frac/to-bounds [0 800 600 0])
+          bounds (b/to-bounds (parse-arg (:bounds params)))
+          screen (b/to-bounds [0 800 600 0])
           newb   (zoom-fn 
                    bounds 
                    screen 
@@ -71,13 +72,13 @@
         bounds (parse-arg (:bounds params))
         x      (to-number (:x params))
         y      (to-number (:y params))]
-    (frac/real-coords bounds size x y)))
+    (b/real-coords bounds size x y)))
 
 (defremote zoom-in [params]
-  (process-params params frac/zoom-in))
+  (process-params params b/zoom-in))
 
 (defremote zoom-out [params]
-  (process-params params frac/zoom-out))
+  (process-params params b/zoom-out))
 
 (defpage [:get "/mandlebrot"] {:as params}
   (let [params (process-params params)]
@@ -105,12 +106,10 @@
         bounds      (parse-arg (:bounds params))
         cut-off     (to-number (:cut-off params))
         fractal-set (case (:type params)
-                      "mandlebrot" (frac/mandlebrot-set bounds)
-                      "julia"      (frac/julia-set bounds (parse-arg (:start-posn params))))]
-    (frac/fractal
+                      "mandlebrot" (f/mandlebrot-set bounds)
+                      "julia"      (f/julia-set bounds (parse-arg (:start-posn params))))]
+    (f/fractal
       size
       fractal-set
       cut-off
       color-map)))
-
-; [1 1.5 -1 -1.5]))

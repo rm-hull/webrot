@@ -1,64 +1,21 @@
 (ns webrot.data-mappers.fractal
-  (:require [webrot.data-mappers.lut :as lut])
+  (:require [webrot.data-mappers.lut :as lut]
+            [webrot.data-mappers.bounds :as b])
   (:import [java.awt.image BufferedImage]))
-
-(defrecord Bounds [top right bottom left])
-
-(defn to-bounds [[top rgt bot lft]]
-  (Bounds. 
-    (max top bot)
-    (max lft rgt)
-    (min top bot)
-    (min lft rgt)))
 
 (defn julia-set
   ([c] (julia-set [1 1.5 -1 -1.5] c))
   ([bounds c]
-    { :bounds (to-bounds bounds)
+    { :bounds (b/to-bounds bounds)
       :start-fn (fn [xy] xy)
       :c-fn (fn [xy] c) }))
 
 (defn mandlebrot-set
   ([] (mandlebrot-set [1 0.5 -1 -2]))
   ([bounds]
-    { :bounds (to-bounds bounds)
+    { :bounds (b/to-bounds bounds)
       :start-fn (fn [xy] [0 0])
       :c-fn (fn [xy] xy) }))
-
-(defn- abs [n]
-  (if (neg? n) (- n) n))
-
-(defn- width [bounds]
-  (abs (- (:left bounds) (:right bounds))))
-
-(defn- height [bounds]
-  (abs (- (:top bounds) (:bottom bounds))))
-
-(defn zoom-in [bounds screen x y]
-  "Recalculate bounds (zoom in by 50%)"
-  (let [bot (+ (:bottom bounds) (* y (/ (height bounds) (height screen))) (/ (height bounds) -4))
-        lft (+ (:left bounds)   (* x (/ (width bounds)  (width screen)))  (/ (width bounds) -4))]
-    (Bounds.
-      (double (+ bot (/ (height bounds) 2))) ; top
-      (double (+ lft (/ (width bounds) 2)))  ; right
-      (double bot)
-      (double lft))))
-
-(defn zoom-out [bounds screen x y]
-  "Recalculate bounds (zoom out by 50%)"
-  (let [bot (+ (:bottom bounds) (* y (/ (height bounds) (height screen))) (- (height bounds)))
-        lft (+ (:left bounds)   (* x (/ (width bounds)  (width screen)))  (- (width bounds)))]
-    (Bounds.
-      (double (+ bot (* (height bounds) 2))) ; top
-      (double (+ lft (* (width bounds) 2)))  ; right
-      (double bot)
-      (double lft))))
-
-(defn real-coords [bounds screen x y]
-  (let [bounds (to-bounds bounds)
-        screen (to-bounds screen)]
-  { :x (double (+ (:left bounds)   (* (width bounds)  (/ x (width screen)))))
-    :y (double (+ (:bottom bounds) (* (height bounds) (/ y (height screen))))) }))
 
 (defn- compute [[^double z-re ^double z-im] [^double c-re ^double c-im] ^long cut-off]
   (loop [counter 0
@@ -86,8 +43,8 @@
         c-fn (:c-fn fractal-set)
         start-fn (:start-fn fractal-set)
         img (BufferedImage. w h BufferedImage/TYPE_INT_RGB)
-        xs (gen-offsets w (width bounds)  (:left bounds))
-        ys (gen-offsets h (height bounds) (:bottom bounds))
+        xs (gen-offsets w (b/width bounds)  (:left bounds))
+        ys (gen-offsets h (b/height bounds) (:bottom bounds))
         ]
     (doseq [y ys
             x xs
@@ -116,8 +73,8 @@
         c-fn (:c-fn fractal-set)
         start-fn (:start-fn fractal-set)
         img (BufferedImage. w h BufferedImage/TYPE_INT_RGB)
-        x-offsets (partial nth (gen-offsets w (width bounds) (:left bounds)))
-        y-offsets (partial nth (gen-offsets h (height bounds) (:bottom bounds)))
+        x-offsets (partial nth (gen-offsets w (b/width bounds) (:left bounds)))
+        y-offsets (partial nth (gen-offsets h (b/height bounds) (:bottom bounds)))
         translate-fn (fn [x y] [(x-offsets x) (y-offsets y)])
         xs (vec (range w))
         ys (vec (range h))
