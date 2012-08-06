@@ -2,6 +2,7 @@
   (:require [webrot.views.common :as common]
             [webrot.data-mappers.lut :as lut]
             [webrot.data-mappers.bounds :as b]
+            [webrot.data-mappers.pascal :as p]
             [webrot.data-mappers.fractal :as f])
   (:use [noir.core :only [defpage defpartial]]
         [noir.fetch.remotes :only [defremote]]
@@ -88,6 +89,12 @@
         [:div#fractal
           (link-to "#" (image { :id "drop-zone" } (url "render" params)))
           (common/spinner "container grey")]))))
+
+(defpage [:get "/sierpinski"] {:as params}
+  (let [rows    320
+        color   0xFFFFFF
+        divisor (to-number (:divisor params))]
+    (p/draw-gasket rows divisor color)))
 
 (defpage "/test/:lut" {:keys [lut]}
   (let [w 800
