@@ -17,7 +17,8 @@
         data (vec data)]
     (doseq [i (range (count data))
             :let [x (+ offx (* 2 i))
-                  color (nth data i)]]
+                  color (nth data i)]
+            :when (not= color Color/WHITE)]
       (doto graphics
         (.setColor color)
         (.fillRect x y 2 2)))))
