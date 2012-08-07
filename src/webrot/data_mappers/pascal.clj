@@ -8,31 +8,26 @@
             (rows-seq [xs] (lazy-seq (cons xs (rows-seq (next-row xs)))))]
       (rows-seq (list seed)))))
 
-(defn mapper [mapper-fn coll]
-  (vec (map #(map mapper-fn %) coll)))
+(def integers (iterate inc 1))
 
-(defn write-row [graphics row data width]
-  (let [y    (* 2 row)
-        offx (- width (count data))
-        data (vec data)]
-    (doseq [i (range (count data))
-            :let [x (+ offx (* 2 i))
-                  color (nth data i)]
-            :when (not= color Color/WHITE)]
-      (doto graphics
-        (.setColor color)
-        (.fillRect x y 2 2)))))
+(defn write-row [graphics [^long i data] ^long width mapper-fn]
+  (let [y    (bit-shift-left i 1)
+        offx (- width i)
+        rng  (range offx (+ offx y) 2)]
+    (doseq [[x cell] (map vector rng data)
+            :when (pos? (mapper-fn cell))]
+      (.fillRect graphics x y 2 2))))
 
-(defn draw-gasket [num-rows divisor color]
+(defn draw-gasket [^long num-rows divisor color]
   (let [img-sz (* 2 num-rows)
-        img    (BufferedImage. img-sz img-sz BufferedImage/TYPE_INT_RGB)
-        gfx    (.createGraphics img)
-        tri    (take num-rows pascals-triangle)
-        gasket (mapper #(if (zero? (mod % divisor)) Color/WHITE Color/BLACK) tri)]
+        img (BufferedImage. img-sz img-sz BufferedImage/TYPE_BYTE_BINARY)
+        gfx (.createGraphics img)
+        tri (take num-rows pascals-triangle)
+        f   (fn [n] (mod n divisor))]
    (doto gfx
      (.setColor Color/WHITE)
-     (.fillRect 0 0 img-sz img-sz)) 
-   (doseq [i (range num-rows)
-           :let [row-data (nth gasket i)]]
-     (write-row gfx i row-data num-rows))
+     (.fillRect 0 0 img-sz img-sz)
+     (.setColor Color/BLACK))
+   (doseq [current-row (map vector integers tri)]
+     (write-row gfx current-row num-rows f))
    img))
