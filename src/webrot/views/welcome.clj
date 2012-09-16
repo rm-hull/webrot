@@ -91,9 +91,9 @@
           (common/spinner "container grey")]))))
 
 (defpage [:get "/sierpinski"] {:as params}
-  (let [rows    320
-        color   0xFFFFFF
-        divisor (to-number (:divisor params))]
+  (let [color   0xFFFFFF
+        rows    (to-number (get params :size 320))
+        divisor (to-number (get params :divisor 2))]
     (p/draw-gasket rows divisor color)))
 
 (defpage "/test/:lut" {:keys [lut]}
