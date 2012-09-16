@@ -1,4 +1,4 @@
-(ns webrot.client.main
+(ns webrot.client.mandlebrot.core
   (:require [fetch.remotes :as remotes])
   (:require-macros [fetch.macros :as fm])
   (:use [jayq.core :only [$ hide show bind attr fade-in document-ready val css anim]]
