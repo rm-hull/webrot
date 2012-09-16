@@ -7,6 +7,6 @@ pom.xml
 *.swp
 tags
 .lein-plugins
-.lein-cljsbuild-compiler-0
+.lein-cljsbuild-compiler-*
 /resources/public/cljs/
 hs_err_pid*.log
