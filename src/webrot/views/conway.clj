@@ -10,7 +10,8 @@
     [:head
      [:title "Conway's Game of Life"]
      (include-css "/css/reset.css")
-     (include-js "js/jquery.min.js")]
+     (include-js "js/jquery.min.js")
+     (include-js "js/requestAnim.js")]
     [:body
      [:canvas#conway {:width 800 :height 600}]
      (common/include-clojurescript "/cljs/conway.js")]))
