@@ -1,13 +1,8 @@
 (ns webrot.client.conway.core
-  (:use [monet.canvas :only [get-context fill-style circle rect alpha]]
+  (:use [monet.canvas :only [get-context fill-style circle rect alpha begin-path close-path fill]]
         [jayq.core :only [$ document-ready]]))
 
 (def ctx (get-context (.get ($ :#conway) 0) "2d"))
-
-(defn dot 
-  ([ctx [x y]] (dot ctx [x y] 4))
-  ([ctx [x y] size]
-    (circle ctx {:x (+ size (* x size 2)) :y (+ size (* y size 2)) :r size})))
 
 (def glider 
   #{[2 0] [2 1] [2 2] [1 2] [0 1]})
@@ -18,6 +13,12 @@
 (def oscillator
   #{[1 0] [1 1] [1 2]})
 
+(def neighbours
+  (for [i [-1 0 1]
+        j [-1 0 1]
+        :when (not= 0 i j)]
+    [i j]))
+
 (defn transform 
   "Transforms a point [x y] by a given offset [dx dy]"
   [[x y] [dx dy]]
@@ -25,8 +26,20 @@
 
 (defn place [artefact position]
   (map (partial transform position) artefact))
+ 
+(defn stepper [neighbours birth? survive?]
+  (fn [cells]
+    (set (for [[loc n] (frequencies (mapcat neighbours cells))
+               :when (if (cells loc) (survive? n) (birth? n))]
+           loc))))
 
-(def world
+(def conways-game-of-life
+  (stepper (partial place neighbours) #{3} #{2 3}))
+
+(defn dot [ctx [x y]]
+  (rect ctx {:x (* x 8) :y (* y 8) :w 7 :h 7}))
+
+(def sample-world
   (into #{}
     (concat
       (place oscillator [25 5])
@@ -44,30 +57,31 @@
                      (repeatedly #(int (rand w)))
                      (repeatedly #(int (rand h)))))))
 
-(defn maxf [f coll]
-  (reduce max (map f coll)))
+(def size [100 75])
+(def worlds (atom (random-world size 800)))
+;(def worlds (atom sample-world))
 
-(defn draw-cells
-  ([ctx cells] (draw-cells ctx cells [(maxf first cells) (maxf second cells)]))
-  ([ctx cells [w h]]
-    (for [y (range (inc h))
-          x (range (inc w))
-          :let [locn  [x y]
-                [color opacity] (if (cells locn) 
-                                  ["#ffff00" 1.0] 
-                                  ["#000000" 0.5])]]
-      (-> ctx 
-          (fill-style color) 
-          (alpha opacity) 
-          (dot locn)))
-;    ctx))
-  ))
+(defn sanitize [world [w h]]
+  (let [pred (fn [[x y]] (and (>= x 0) (>= y 0) (< x w) (< y h)))]
+    (set (distinct (filter pred world)))))
 
-(document-ready
-  (fn []
-    (-> ctx
-        (draw-cells (random-world [50 50] 200) [50 50])
-        (dot [2 0])
-      )))
+(defn draw-cells [ctx cells [w h]]
+  (-> ctx
+      (fill-style "#000000")
+      (alpha 0.5)
+      (rect {:x 0 :y 0 :w 800 :h 600})
+      (fill-style "#ffff00")
+      (alpha 1.0))
+  (doall (map (partial dot ctx) cells)))
+
+(def animate)
+
+(defn animate []
+  (. js/window (requestAnimFrame animate))
+  (let [current (deref worlds)]
+    (draw-cells ctx current size)
+    (swap! worlds [] (sanitize (conways-game-of-life current) size))))
+     
+(animate)
 
 
