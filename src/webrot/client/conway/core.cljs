@@ -70,8 +70,8 @@
 (def animate)
 
 (defn animate []
-  (. js/window (requestAnimFrame animate))
   (fm/remote (next-generation size (deref world)) [next-gen]
+    (. js/window (requestAnimFrame animate))
     (draw-cells ctx next-gen)
     (reset! world next-gen)))
      
