@@ -1,4 +1,6 @@
 (ns webrot.client.conway.core
+  (:require [fetch.remotes :as remotes])
+  (:require-macros [fetch.macros :as fm])
   (:use [monet.canvas :only [get-context fill-style circle rect alpha begin-path close-path fill]]
         [jayq.core :only [$ document-ready]]))
 
@@ -18,12 +20,6 @@
  
 (def oscillator
   #{[1 0] [1 1] [1 2]})
-
-(def neighbours
-  (for [i [-1 0 1]
-        j [-1 0 1]
-        :when (not= 0 i j)]
-    [i j]))
 
 (defn transform 
   "Transforms a point [x y] by a given offset [dx dy]"
@@ -62,26 +58,7 @@
 (def world (atom (random-world size 800)))
 ;(def world (atom sample-world))
 
-(defn sanitize [[x y]]
-  (and 
-    (>= x 0)
-    (>= y 0)
-    (< x (size 0))
-    (< y (size 1))))
-
- 
-(defn stepper [neighbours birth? survive? check-fn]
-  (fn [cells]
-    (set (for [[loc n] (frequencies (mapcat neighbours cells))
-               :when (and
-                       (if (cells loc) (survive? n) (birth? n))
-                       (check-fn loc))]
-           loc))))
-
-(def conways-game-of-life
-  (stepper (partial place neighbours) #{3} #{2 3} sanitize))
-
-(defn draw-cells [ctx cells [w h]]
+(defn draw-cells [ctx cells]
   (-> ctx
       (fill-style "#000000")
       (alpha 0.5)
@@ -94,9 +71,9 @@
 
 (defn animate []
   (. js/window (requestAnimFrame animate))
-  (let [current (deref world)]
-    (draw-cells ctx current size)
-    (swap! world conways-game-of-life current)))
+  (fm/remote (next-generation size (deref world)) [next-gen]
+    (draw-cells ctx next-gen)
+    (reset! world next-gen)))
      
 (animate)
 

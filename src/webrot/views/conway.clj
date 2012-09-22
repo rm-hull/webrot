@@ -2,6 +2,7 @@
   (:require [webrot.data-mappers.cellular-automata :as ca]
             [webrot.views.common :as common])
   (:use [noir.core :only [defpage defpartial]]
+        [noir.fetch.remotes :only [defremote]]
         [hiccup.page :only [include-css include-js html5]]
         [hiccup.util]))
 
@@ -15,3 +16,7 @@
     [:body
      [:canvas#conway {:width 800 :height 600}]
      (common/include-clojurescript "/cljs/conway.js")]))
+
+(defremote next-generation [size cells]
+  (->> (ca/conways-game-of-life cells)
+       (ca/trim size)))
