@@ -6,7 +6,7 @@
         :when (not= 0 i j)]
     [i j]))
 
-(def block
+(def nine-block
   (for [i [-1 0 1]
         j [-1 0 1]]
     [i j]))
@@ -28,8 +28,17 @@
 (def conways-game-of-life
   (stepper (partial place neighbours) #{3} #{2 3}))
 
+(def semi-vote
+  (stepper (partial place neighbours) #{3 5 6 7 8} #{4 6 7 8}))
+
 (def vichniac-vote
-  (stepper (partial place block) #{5 6 7 8 9} #{5 6 7 8 9}))
+  (stepper (partial place nine-block) #{5 6 7 8 9} #{5 6 7 8 9}))
+
+(def unstable-vichniac-vote
+  (stepper (partial place nine-block) #{4 6 7 8 9} #{4 6 7 8 9}))
+
+(def fredkin
+  (stepper (partial place nine-block) #{1 3 5 7 9} #{1 3 5 7 9}))
 
 (defn trim [[w h] cells]
   (let [sanitize (fn [[x y]] (and (>= x 0) (>= y 0) (< x w) (< y h)))]

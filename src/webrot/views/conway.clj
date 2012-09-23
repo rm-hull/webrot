@@ -26,5 +26,9 @@
 (defremote ca-next-gen [size ca-type cells]
   (let [f (case ca-type
             "conway" ca/conways-game-of-life
-            "vichniac-vote" ca/vichniac-vote)]
+            "semi-vote" ca/semi-vote
+            "fredkin" ca/fredkin
+            "vichniac-vote" ca/vichniac-vote
+            "unstable-vichniac" ca/unstable-vichniac-vote
+            )]
     (->> (f cells) (ca/trim size))))
