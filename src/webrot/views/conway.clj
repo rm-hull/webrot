@@ -23,6 +23,14 @@
                        :data-rand threshold}]
        (common/include-clojurescript "/cljs/conway.js")])))
 
+(defn trim [[w h] [x y]] 
+  (and 
+    (>= x 0) 
+    (>= y 0) 
+    (< x w) 
+    (< y h)))
+
+
 (defremote ca-next-gen [size ca-type cells]
   (let [f (case ca-type
             "conway" ca/conways-game-of-life
@@ -31,4 +39,4 @@
             "vichniac-vote" ca/vichniac-vote
             "unstable-vichniac" ca/unstable-vichniac-vote
             )]
-    (->> (f cells) (ca/trim size))))
+    (f cells (partial trim size))))

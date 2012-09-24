@@ -20,9 +20,11 @@
   (map (partial transform position) artefact))
 
 (defn stepper [neighbours birth? survive?]
-  (fn [cells]
+  (fn [cells trim-fn]
     (set (for [[loc n] (frequencies (mapcat neighbours cells))
-               :when (if (cells loc) (survive? n) (birth? n))]
+               :when (and 
+                       (if (cells loc) (survive? n) (birth? n))
+                       (trim-fn loc))]
            loc))))
 
 (def conways-game-of-life
@@ -40,9 +42,6 @@
 (def fredkin
   (stepper (partial place nine-block) #{1 3 5 7 9} #{1 3 5 7 9}))
 
-(defn trim [[w h] cells]
-  (let [sanitize (fn [[x y]] (and (>= x 0) (>= y 0) (< x w) (< y h)))]
-    (set (filter sanitize cells))))
 
 
 ;(defn encode [[w h] cells]
