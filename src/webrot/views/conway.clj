@@ -30,13 +30,20 @@
     (< x w) 
     (< y h)))
 
+(def dispatch-table
+  { :conway ca/conways-game-of-life
+    :semi-vote ca/semi-vote
+    :fredkin ca/fredkin
+    :vichniac-vote ca/vichniac-vote
+    :unstable-vichniac ca/unstable-vichniac-vote })
 
-(defremote ca-next-gen [size ca-type cells]
-  (let [f (case ca-type
-            "conway" ca/conways-game-of-life
-            "semi-vote" ca/semi-vote
-            "fredkin" ca/fredkin
-            "vichniac-vote" ca/vichniac-vote
-            "unstable-vichniac" ca/unstable-vichniac-vote
-            )]
-    (f cells (partial trim size))))
+(defn encode [cells]
+  (-> cells vec flatten))
+
+(defn decode [points]
+  (->> points (partition 2) set))
+
+(defremote ca-next-gen [size ca-type points]
+  (let [f ((keyword ca-type) dispatch-table)
+        cells (decode points)]
+    (encode (f cells (partial trim size)))))

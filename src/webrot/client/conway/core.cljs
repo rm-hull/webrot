@@ -36,27 +36,8 @@
 (defn dot [ctx [x y]]
   (rect ctx {:x (bit-shift-left x 3) :y (bit-shift-left y 3) :w 7 :h 7}))
 
-;(def sample-world
-;  (into #{}
-;    (concat
-;      (place oscillator [25 5])
-;      (place oscillator [17 2])
-;      (place glider [57 3])
-;      (place glider [10 11])
-;      (place glider [34 7])
-;      (place toad [90 7])
-;      (place beacon [90 27])
-;      (place light-spaceship [72 19])
-;      (place light-spaceship [12 6])
-;      (place light-spaceship [4 16]))))
-
-;(defn random-world [[w h] probability]
-;  (for [x (range w)
-;        y (range h)]
-;    (if (> (rand) probability) 1 0)))
-
 (defn random-world [[w h] probability]
-  (set
+  (flatten
     (for [x (range w)
           y (range h)
           :when (< (rand) probability)]
@@ -64,9 +45,6 @@
 
 (def size [100 75])
 (def world (atom (random-world size threshold)))
-;(def world (atom sample-world))
-
-;(def cells (for [y (range (second size)) x (range (first size))] [x y]))
 
 (defn draw-cells [ctx cells]
   (-> ctx
@@ -75,7 +53,8 @@
       (rect {:x 0 :y 0 :w 800 :h 600})
       (fill-style color)
       (alpha 1.0))
-  (doall (map (partial dot ctx) cells)))
+  (doseq [c cells]
+    (dot ctx c)))
 
 ;(defn draw-points [ctx points]
 ;  (-> ctx
@@ -88,15 +67,21 @@
 ;    (if (pos? pt)
 ;      (dot ctx loc))))
 
+;(defmacro logger [expr]
+;  `(let [start# (. System (nanoTime))
+;         ret# ~expr]
+;     (.log js/console (str expr " - elapsed time: " (/ (double (- (. System (nanoTime)) start#)) 1000000.0) " msecs"))
+;     ret#))
+
 (def animate)
 
 (defn animate []
   (fm/remote (ca-next-gen size ca-type (deref world)) [next-gen]
     (. js/window (requestAnimFrame animate))
-    (draw-cells ctx next-gen)
+    (draw-cells ctx (partition 2 next-gen))
     (reset! world next-gen)))
 
-(draw-cells ctx (deref world))
+(draw-cells ctx (partition 2 (deref world)))
 (animate)
 
 
