@@ -13,7 +13,7 @@
 
 (defn transform 
   "Transforms a point [x y] by a given offset [dx dy]"
-  [[x y] [dx dy]]
+  [[^long x ^long y] [^long dx ^long dy]]
   [(+ x dx) (+ y dy)])
 
 (defn place [artefact position]

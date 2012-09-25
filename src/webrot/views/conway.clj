@@ -23,7 +23,7 @@
                        :data-rand threshold}]
        (common/include-clojurescript "/cljs/conway.js")])))
 
-(defn trim [[w h] [x y]] 
+(defn trim [[^long w ^long h] [^long x ^long y]] 
   (and 
     (>= x 0) 
     (>= y 0) 
