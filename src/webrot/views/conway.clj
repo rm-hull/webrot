@@ -44,6 +44,7 @@
   (->> points (partition 2) set))
 
 (defremote ca-next-gen [size ca-type points]
-  (let [f ((keyword ca-type) dispatch-table)
+  (let [disp-fn ((keyword ca-type) dispatch-table)
+        trim-fn (fn [locn] (trim size locn))
         cells (decode points)]
-    (encode (f cells (partial trim size)))))
+    (encode (disp-fn cells trim-fn))))

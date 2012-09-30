@@ -25,14 +25,6 @@
 ;(def oscillator
 ;  #{[1 0] [1 1] [1 2]})
 
-(defn transform 
-  "Transforms a point [x y] by a given offset [dx dy]"
-  [[x y] [dx dy]]
-  [(+ x dx) (+ y dy)])
-
-(defn place [artefact position]
-  (map (partial transform position) artefact))
-
 (defn dot [ctx [x y]]
   (rect ctx {:x (bit-shift-left x 3) :y (bit-shift-left y 3) :w 7 :h 7}))
 
@@ -68,10 +60,13 @@
 ;      (dot ctx loc))))
 
 ;(defmacro logger [expr]
-;  `(let [start# (. System (nanoTime))
+;  `(let [start# (current-time-millis)
 ;         ret# ~expr]
-;     (.log js/console (str expr " - elapsed time: " (/ (double (- (. System (nanoTime)) start#)) 1000000.0) " msecs"))
+;     (.log js/console (str expr " - elapsed time: " (- (current-time-millis) start#) " msecs"))
 ;     ret#))
+
+(defn current-time-millis []
+  (.getTime (js/Date.)))
 
 (def animate)
 
@@ -83,5 +78,4 @@
 
 (draw-cells ctx (partition 2 (deref world)))
 (animate)
-
 

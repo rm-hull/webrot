@@ -17,7 +17,7 @@
   [(+ x dx) (+ y dy)])
 
 (defn place [artefact position]
-  (map (partial transform position) artefact))
+  (map #(transform position %) artefact))
 
 (defn stepper [neighbours birth? survive?]
   (fn [cells trim-fn]
@@ -28,19 +28,19 @@
            loc))))
 
 (def conways-game-of-life
-  (stepper (partial place neighbours) #{3} #{2 3}))
+  (stepper #(place neighbours %) #{3} #{2 3}))
 
 (def semi-vote
-  (stepper (partial place neighbours) #{3 5 6 7 8} #{4 6 7 8}))
+  (stepper #(place neighbours %) #{3 5 6 7 8} #{4 6 7 8}))
 
 (def vichniac-vote
-  (stepper (partial place nine-block) #{5 6 7 8 9} #{5 6 7 8 9}))
+  (stepper #(place nine-block %) #{5 6 7 8 9} #{5 6 7 8 9}))
 
 (def unstable-vichniac-vote
-  (stepper (partial place nine-block) #{4 6 7 8 9} #{4 6 7 8 9}))
+  (stepper #(place nine-block %) #{4 6 7 8 9} #{4 6 7 8 9}))
 
 (def fredkin
-  (stepper (partial place nine-block) #{1 3 5 7 9} #{1 3 5 7 9}))
+  (stepper #(place nine-block %) #{1 3 5 7 9} #{1 3 5 7 9}))
 
 
 

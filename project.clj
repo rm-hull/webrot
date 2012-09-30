@@ -5,22 +5,26 @@
                  [crate "0.2.1"]
                  [fetch "0.1.0-alpha2"]
                  [org.clojars.rm-hull/monet "0.1.1-SNAPSHOT"]
-                 [ring/ring-core "1.1.5"]
+                 [ring/ring-core "1.1.6"]
                  [ring-basic-authentication "1.0.1"]
                  [ibdknox/ring-gzip-middleware "0.1.1"]
                  [com.cemerick/drawbridge "0.0.6"]]
   :cljsbuild {
     :builds [
-      {:source-path "src/webrot/client/mandlebrot",
+      {:source-path "src/webrot/client/mandlebrot"
+       :notify-command ["notify-send"]
        :compiler {:output-to "resources/public/cljs/mandlebrot.js"
-                  :optimizations :whitespace
-                  :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"]
+                  :optimizations :advanced
+                  :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"]
+                  :print-input-delimiter true
                   :pretty-print true}}
-      {:source-path "src/webrot/client/conway",
+      {:source-path "src/webrot/client/conway"
        :compiler {:output-to "resources/public/cljs/conway.js"
-                  :optimizations :whitespace
-                  :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"]
-                  :pretty-print true}}
+                  :optimizations :simple
+                  :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"]
+                  ;:print-input-delimiter true
+                  ;:pretty-print true
+                  }}
              
     ]}
   :hooks [leiningen.cljsbuild]
