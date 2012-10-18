@@ -28,7 +28,7 @@
              
     ]}
   :hooks [leiningen.cljsbuild]
-  :plugins [[lein-cljsbuild "0.2.7"]]
+  :plugins [[lein-cljsbuild "0.2.8"]]
   :profiles {:dev {:dependencies [[vimclojure/server "2.3.6"]]}}
   :main webrot.server
   :min-lein-version "2.0.0"
