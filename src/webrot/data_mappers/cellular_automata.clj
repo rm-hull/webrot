@@ -42,6 +42,8 @@
 (def fredkin
   (stepper #(place nine-block %) #{1 3 5 7 9} #{1 3 5 7 9}))
 
+(def circle
+  (stepper #(place neighbours %) #{3} #{1 2 4}))
 
 
 ;(defn encode [[w h] cells]

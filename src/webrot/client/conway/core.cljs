@@ -25,6 +25,19 @@
 ;(def oscillator
 ;  #{[1 0] [1 1] [1 2]})
 
+(def seven-bar
+   (set (map #(vector % 0) (range 7))))
+
+; TODO: make this exportable from clj files
+(defn transform 
+  "Transforms a point [x y] by a given offset [dx dy]"
+  [[^long x ^long y] [^long dx ^long dy]]
+  [(+ x dx) (+ y dy)])
+
+; TODO: make this exportable from clj files
+(defn place [artefact position]
+  (map #(transform position %) artefact))
+
 (defn dot [ctx [x y]]
   (rect ctx {:x (bit-shift-left x 3) :y (bit-shift-left y 3) :w 7 :h 7}))
 
@@ -36,7 +49,11 @@
       [x y])))
 
 (def size [100 75])
-(def world (atom (random-world size threshold)))
+(def world 
+  (atom 
+    (case ca-type
+      "circle" (flatten (place seven-bar [47 34]))
+      (random-world size threshold))))
 
 (defn draw-cells [ctx cells]
   (-> ctx

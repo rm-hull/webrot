@@ -34,6 +34,7 @@
   { :conway ca/conways-game-of-life
     :semi-vote ca/semi-vote
     :fredkin ca/fredkin
+    :circle ca/circle
     :vichniac-vote ca/vichniac-vote
     :unstable-vichniac ca/unstable-vichniac-vote })
 
