@@ -12,7 +12,7 @@
   :cljsbuild {
     :builds [
       {:source-path "src/webrot/client/mandlebrot"
-       :notify-command ["notify-send"]
+       ;:notify-command ["notify-send"]
        :compiler {:output-to "resources/public/cljs/mandlebrot.js"
                   :optimizations :advanced
                   :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"]
