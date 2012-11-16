@@ -33,12 +33,12 @@
 
 (defn- redraw [args]
   (if (compare-and-set! busy false true)
-    (this-as me
+    (do
       (show $spinner)
-        (swap! params {} args)
-        (swap! busy identity true)
-        (attr $img :src (url "render" args))
-        false))) 
+      (swap! params {} args)
+      (swap! busy identity true)
+      (attr $img :src (url "render" args))
+      false))) 
     ;            (fade-in $fractal 400) 
     ;            (animate $fractal {:src (url "mandlebrot" result)})
     ;            (.log js/console (str "Click: " (url "mandlebrot" result))))))))
