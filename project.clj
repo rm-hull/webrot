@@ -1,5 +1,5 @@
 (defproject webrot/webrot "0.1.0-SNAPSHOT" 
-  :dependencies [;[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.0-beta1"]
                  [noir "1.3.0-beta10"]
                  [jayq "0.1.0-alpha4"]
                  [crate "0.2.1"]
