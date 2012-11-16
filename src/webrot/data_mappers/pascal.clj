@@ -23,7 +23,7 @@
         img (BufferedImage. img-sz img-sz BufferedImage/TYPE_BYTE_BINARY)
         gfx (.createGraphics img)
         tri (take num-rows pascals-triangle)
-        f   (fn [n] (mod n divisor))]
+        f   (fn [n] (rem n divisor))]
    (doto gfx
      (.setColor Color/WHITE)
      (.fillRect 0 0 img-sz img-sz)
