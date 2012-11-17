@@ -14,7 +14,7 @@
       {:source-path "src/webrot/client/mandlebrot"
        ;:notify-command ["notify-send"]
        :compiler {:output-to "resources/public/cljs/mandlebrot.js"
-                  :optimizations :advanced
+                  :optimizations :simple
                   :externs ["https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"]
                   :print-input-delimiter true
                   :pretty-print true}}

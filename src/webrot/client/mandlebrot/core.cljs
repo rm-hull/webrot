@@ -33,7 +33,7 @@
 
 (defn- redraw [args]
   (if (compare-and-set! busy false true)
-    (do
+    (this-as me
       (show $spinner)
       (swap! params {} args)
       (swap! busy identity true)
