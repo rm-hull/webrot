@@ -20,8 +20,8 @@
 (def busy (atom true))
 
 (defn- coords-from-event [event] 
-  { :x (.-offsetX event)
-    :y (.-offsetY event) })
+  { :x (.-clientX event)
+    :y (.-clientY event) })
 
 (defn- coords-from-ui [ui] 
   { :x (-> ui .-offset .-left)
