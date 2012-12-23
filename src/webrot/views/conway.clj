@@ -14,7 +14,7 @@
       [:head
        [:title "Cellular Automata"]
        (include-css "/css/reset.css")
-       (include-js "js/jquery.min.js")
+       (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
        (include-js "js/requestAnim.js")]
       [:body
        [:canvas#world {:width 800 :height 600 
