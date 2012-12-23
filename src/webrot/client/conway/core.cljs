@@ -1,7 +1,7 @@
 (ns webrot.client.conway.core
   (:require [fetch.remotes :as remotes])
   (:require-macros [fetch.macros :as fm])
-  (:use [monet.canvas :only [get-context fill-style circle rect alpha begin-path close-path fill]]
+  (:use [monet.canvas :only [get-context fill-style rect alpha begin-path line-to move-to close-path fill]]
         [jayq.core :only [$ document-ready data]]))
 
 (def canvas ($ :canvas#world))
@@ -39,7 +39,13 @@
   (map #(transform position %) artefact))
 
 (defn dot [ctx [x y]]
-  (rect ctx {:x (bit-shift-left x 3) :y (bit-shift-left y 3) :w 7 :h 7}))
+  (let [a (* x 8)
+        b (* y 8)]
+    (-> ctx
+        (move-to a b)
+        (line-to a (+ b 7))
+        (line-to (+ a 7) (+ b 7))
+        (line-to (+ a 7) b))))
 
 (defn random-world [[w h] probability]
   (flatten
@@ -61,29 +67,13 @@
       (alpha 0.5)
       (rect {:x 0 :y 0 :w 800 :h 600})
       (fill-style color)
-      (alpha 1.0))
+      (alpha 1.0)
+      (begin-path))
   (doseq [c cells]
-    (dot ctx c)))
-
-;(defn draw-points [ctx points]
-;  (-> ctx
-;      (fill-style "#000000")
-;      (alpha 0.5)
-;      (rect {:x 0 :y 0 :w 800 :h 600})
-;      (fill-style color)
-;      (alpha 1.0))
-;  (doseq [[pt loc] (map vector points cells)]
-;    (if (pos? pt)
-;      (dot ctx loc))))
-
-;(defmacro logger [expr]
-;  `(let [start# (current-time-millis)
-;         ret# ~expr]
-;     (.log js/console (str expr " - elapsed time: " (- (current-time-millis) start#) " msecs"))
-;     ret#))
-
-(defn current-time-millis []
-  (.getTime (js/Date.)))
+    (dot ctx c))
+  (-> ctx
+      (fill)
+      (close-path)))
 
 (def animate)
 
