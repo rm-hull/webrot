@@ -15,7 +15,7 @@
 
 (defmulti to-number class)
 (defmethod to-number Number [n] n)
-(defmethod to-number :default [obj] (read-string obj))
+(defmethod to-number :default [obj] (binding [*read-eval* false] (read-string obj)))
 
 (defn- parse-arg
   ([arg] (parse-arg arg nil))

@@ -14,14 +14,13 @@
       [:head
        [:title "Cellular Automata"]
        (include-css "/css/reset.css")
-       (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
-       (include-js "js/requestAnim.js")]
+       (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js")]
       [:body
        [:canvas#world {:width 800 :height 600 
                        :data-color color 
                        :data-ca-type ca-type
                        :data-rand threshold}]
-       (common/include-clojurescript "/cljs/conway.js")])))
+       (include-js "/cljs/conway.js")])))
 
 (defn trim [[^long w ^long h] [^long x ^long y]] 
   (and 

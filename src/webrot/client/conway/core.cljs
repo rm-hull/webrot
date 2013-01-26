@@ -2,6 +2,7 @@
   (:require [fetch.remotes :as remotes])
   (:require-macros [fetch.macros :as fm])
   (:use [monet.canvas :only [get-context fill-style rect alpha begin-path line-to move-to close-path fill]]
+        [monet.core :only [animation-frame]]
         [jayq.core :only [$ document-ready data]]))
 
 (def canvas ($ :canvas#world))
@@ -79,7 +80,7 @@
 
 (defn animate []
   (fm/remote (ca-next-gen size ca-type (deref world)) [next-gen]
-    (. js/window (requestAnimFrame animate))
+    (animation-frame animate)
     (draw-cells ctx (partition 2 next-gen))
     (reset! world next-gen)))
 

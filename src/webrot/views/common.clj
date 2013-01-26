@@ -10,35 +10,19 @@
            [java.awt.image RenderedImage]
            [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
-; When using {:optimizations :whitespace}, the Google Closure compiler combines
-; its JavaScript inputs into a single file, which obviates the need for a "deps.js"
-; file for dependencies.  However, true to ":whitespace", the compiler does not remove
-; the code that tries to fetch the (nonexistent) "deps.js" file.  Thus, we have to turn
-; off that feature here by setting CLOSURE_NO_DEPS.
-;
-; Note that this would not be necessary for :simple or :advanced optimizations.
-(defn include-clojurescript [path]
-  (list
-      (javascript-tag "var CLOSURE_NO_DEPS = true;")
-          (include-js path)))
-
 (defpartial layout [& content]
   (html5
     [:head
      [:title "Webrot"]
      (include-css "/css/reset.css")
-     ;(include-css "/css/default.css")
      (include-css "/css/spinner.css")
-     (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js")
-     (include-js "https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js")
-     ;(include-js "js/jquery.min.js")
-     ;(include-js "js/jquery-ui.min.js")
+     (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js")
+     (include-js "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js")
      (include-js "js/jquery.ui.touch-punch.min.js")]
     [:body
      [:div#wrapper
       content]
-      (include-clojurescript "/cljs/mandlebrot.js")
-     ]))
+      (include-js "/cljs/mandlebrot.js")]))
 
 (defpartial spinner [css-class]
   (html
